@@ -1,0 +1,119 @@
+city,locality,bhk,rent,size_sqft,furnishing,bathrooms,latitude,longitude,source
+Delhi,Greater Kailash II,4.0,1856000.0,5211.0,Unfurnished,4.0,28.5338204,77.242467,makaan
+Delhi,Hauz Khas,4.0,1294000.0,5523.0,Unfurnished,5.0,28.5498087,77.2077638,makaan
+Delhi,Greater Kailash II,5.0,1811000.0,6521.0,Unfurnished,5.0,28.5338204,77.242467,makaan
+Delhi,Vasant Kunj,5.0,1854000.0,5521.0,Unfurnished,5.0,28.5292495,77.1541335,makaan
+Delhi,Vasant Vihar,15.0,1856000.0,6521.0,Unfurnished,15.0,28.557827,77.1611168,makaan
+Delhi,Shanti Niketan,4.0,1419000.0,6521.0,Unfurnished,5.0,28.5731509,77.1644656,makaan
+Delhi,Aurungzeb Road,4.0,1854000.0,6541.0,Unfurnished,5.0,28.7041,77.1025,makaan
+Delhi,Sunder Nagar,4.0,1544000.0,5521.0,Unfurnished,4.0,28.6016454,77.2421181,makaan
+Delhi,Sunder Vihar,5.0,1546000.0,6854.0,Unfurnished,5.0,28.6630127,77.0883983,makaan
+Delhi,Sunder Nagar,4.0,2211000.0,6854.0,Unfurnished,4.0,28.6016454,77.2421181,makaan
+Delhi,Golf Links,4.0,1285000.0,5521.0,Unfurnished,4.0,28.5959698,77.2311628,makaan
+Delhi,Golf Links,5.0,1812000.0,8521.0,Unfurnished,5.0,28.5959698,77.2311628,makaan
+Delhi,Golf Links,4.0,1546000.0,4521.0,Unfurnished,4.0,28.5959698,77.2311628,makaan
+Delhi,Golf Links,4.0,1544000.0,5562.0,Unfurnished,4.0,28.5959698,77.2311628,makaan
+Delhi,Hauz Khas,10.0,1418000.0,12020.0,Unfurnished,10.0,28.5498087,77.2077638,makaan
+Delhi,Golf Links,8.0,1812000.0,10101.0,Unfurnished,8.0,28.5959698,77.2311628,makaan
+Delhi,Aurungzeb Road,12.0,5885000.0,15562.0,Unfurnished,4.0,28.7041,77.1025,makaan
+Delhi,Sunder Nagar,5.0,1546000.0,8652.0,Unfurnished,5.0,28.6016454,77.2421181,makaan
+Delhi,Vasant Vihar,14.0,1741000.0,18541.0,Unfurnished,14.0,28.557827,77.1611168,makaan
+Delhi,Vasant Vihar,15.0,1879000.0,6852.0,Unfurnished,16.0,28.557827,77.1611168,makaan
+Delhi,Aurungzeb Road,5.0,1854000.0,6521.0,Unfurnished,4.0,28.7041,77.1025,makaan
+Delhi,Aurungzeb Road,5.0,1541000.0,7412.0,Unfurnished,5.0,28.7041,77.1025,makaan
+Delhi,Prithviraj Road,15.0,3624000.0,18521.0,Unfurnished,5.0,28.5950015,77.2161372,makaan
+Delhi,Tilak Marg,15.0,4129000.0,17211.0,Unfurnished,5.0,28.6223066,77.2394313,makaan
+Delhi,India Gate,5.0,1449000.0,6521.0,Unfurnished,5.0,28.6129332,77.2294928,makaan
+Delhi,Tilak Marg,8.0,4010000.0,11010.0,Unfurnished,8.0,28.6223066,77.2394313,makaan
+Delhi,Jor bagh,5.0,1521000.0,5211.0,Unfurnished,5.0,28.5865094,77.2125273,makaan
+Delhi,Tilak Marg,4.0,2222000.0,6521.0,Unfurnished,4.0,28.6223066,77.2394313,makaan
+Delhi,India Gate,15.0,4011000.0,15515.0,Unfurnished,5.0,28.6129332,77.2294928,makaan
+Delhi,Tilak Marg,10.0,3746000.0,16521.0,Unfurnished,5.0,28.6223066,77.2394313,makaan
+Delhi,India Gate,5.0,2128000.0,7425.0,Unfurnished,5.0,28.6129332,77.2294928,makaan
+Delhi,Jor bagh,4.0,1292000.0,5562.0,Unfurnished,4.0,28.5865094,77.2125273,makaan
+Delhi,Tilak Marg,5.0,2191000.0,8521.0,Unfurnished,5.0,28.6223066,77.2394313,makaan
+Delhi,Malcha Marg,5.0,2161000.0,7112.0,Unfurnished,5.0,28.6016026,77.1856802,makaan
+Delhi,Panchsheel Park,5.0,2122000.0,7044.0,Unfurnished,5.0,28.5423747,77.2210916,makaan
+Delhi,Aurungzeb Road,14.0,2255000.0,15562.0,Unfurnished,4.0,28.7041,77.1025,makaan
+Delhi,Malcha Marg,5.0,2010000.0,8521.0,Unfurnished,5.0,28.6016026,77.1856802,makaan
+Delhi,Prithviraj Road,5.0,1461000.0,8562.0,Unfurnished,4.0,28.5950015,77.2161372,makaan
+Delhi,Jor bagh,5.0,1546000.0,6521.0,Unfurnished,5.0,28.5865094,77.2125273,makaan
+Delhi,Golf Links,5.0,1292000.0,7144.0,Unfurnished,5.0,28.5959698,77.2311628,makaan
+Delhi,Golf Links,5.0,1544000.0,6521.0,Unfurnished,5.0,28.5959698,77.2311628,makaan
+Delhi,Sunder Nagar,5.0,1822000.0,8521.0,Unfurnished,5.0,28.6016454,77.2421181,makaan
+Delhi,Golf Links,5.0,1446000.0,5211.0,Unfurnished,5.0,28.5959698,77.2311628,makaan
+Delhi,Chanakya Puri,6.0,3500000.0,11000.0,Semi-Furnished,6.0,28.7041,77.1025,makaan
+Delhi,Jor bagh,4.0,1449000.0,5562.0,Unfurnished,4.0,28.5865094,77.2125273,makaan
+Delhi,Golf Links,4.0,1849000.0,5862.0,Unfurnished,4.0,28.5959698,77.2311628,makaan
+Delhi,Golf Links,4.0,1461000.0,5862.0,Unfurnished,4.0,28.5959698,77.2311628,makaan
+Delhi,Aurungzeb Road,5.0,1491000.0,6251.0,Unfurnished,4.0,28.7041,77.1025,makaan
+Delhi,Prithviraj Road,5.0,1418000.0,7411.0,Unfurnished,4.0,28.5950015,77.2161372,makaan
+Delhi,Aurungzeb Road,4.0,1549000.0,5211.0,Unfurnished,4.0,28.7041,77.1025,makaan
+Delhi,Lodhi Road,4.0,1441000.0,5562.0,Unfurnished,4.0,28.5926365,77.2393452,makaan
+Delhi,Malcha Marg,4.0,1449000.0,5562.0,Unfurnished,4.0,28.6016026,77.1856802,makaan
+Delhi,Malcha Marg,4.0,2010000.0,5211.0,Unfurnished,4.0,28.6016026,77.1856802,makaan
+Delhi,Malcha Marg,5.0,1521000.0,6251.0,Unfurnished,4.0,28.6016026,77.1856802,makaan
+Delhi,Jor bagh,4.0,1859000.0,5852.0,Unfurnished,4.0,28.5865094,77.2125273,makaan
+Delhi,Greater Kailash II,15.0,1812000.0,15412.0,Unfurnished,15.0,28.5338204,77.242467,makaan
+Delhi,Golf Links,4.0,1546000.0,5211.0,Unfurnished,5.0,28.5959698,77.2311628,makaan
+Delhi,Vasant Vihar,14.0,1446000.0,6412.0,Unfurnished,14.0,28.557827,77.1611168,makaan
+Delhi,Chanakya Puri,12.0,3500000.0,19800.0,Semi-Furnished,12.0,28.7041,77.1025,makaan
+Mumbai,Worli,5.0,1500000.0,6500.0,Semi-Furnished,6.0,19.0117388,72.8178706,makaan
+Mumbai,Bandra West,4.0,1300000.0,5800.0,Semi-Furnished,4.0,19.0583358,72.8302669,makaan
+Mumbai,Worli,4.0,1600000.0,7000.0,Furnished,4.0,19.0117388,72.8178706,makaan
+Delhi,DLF Farms,8.0,1400000.0,"7,200 sq ft",Semi-Furnished,8.0,28.48815346,77.15697479,april2024
+Delhi,Central Ridge Reserve Forest,4.0,2000000.0,"7,000 sq ft",Semi-Furnished,4.0,28.60680962,77.18360138,april2024
+Delhi,Tuglak Road,5.0,2162955.0,"6,251 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Tuglak Road,4.0,2010105.0,"5,562 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Golf Links,5.0,1401012.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Jor bagh,5.0,1412255.0,"6,535 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Malcha Marg,5.0,2010102.0,"6,521 sq ft",Unfurnished,4.0,28.60173035,77.18534088,april2024
+Delhi,Lodhi Road,4.0,1418181.0,"6,521 sq ft",Unfurnished,4.0,28.59095383,77.22794342,april2024
+Delhi,Golf Links,5.0,1549118.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,4.0,1501012.0,"5,896 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,4.0,1744844.0,"5,891 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Aurungzeb Road,4.0,2162295.0,"6,251 sq ft",Unfurnished,4.0,28.60279655,77.21968079,april2024
+Delhi,Malcha Marg,4.0,1549491.0,"6,521 sq ft",Unfurnished,4.0,28.60173035,77.18534088,april2024
+Delhi,Prithviraj Road,5.0,1448181.0,"6,521 sq ft",Unfurnished,4.0,28.6001606,77.22097778,april2024
+Delhi,Babar Road,5.0,1418182.0,"6,521 sq ft",Unfurnished,4.0,28.63135529,77.2289505,april2024
+Delhi,Malcha Marg,5.0,1418182.0,"6,521 sq ft",Unfurnished,4.0,28.60173035,77.18534088,april2024
+Delhi,Aurungzeb Road,5.0,1412365.0,"6,521 sq ft",Unfurnished,4.0,28.60279655,77.21968079,april2024
+Delhi,Sunder Nagar,5.0,1411114.0,"5,852 sq ft",Unfurnished,4.0,28.61843681,76.96178436,april2024
+Delhi,Sunder Nagar,4.0,1411812.0,"5,896 sq ft",Unfurnished,4.0,28.61843681,76.96178436,april2024
+Delhi,Amrita Shergill Marg,4.0,1418182.0,"5,896 sq ft",Unfurnished,4.0,28.5969677,77.22038269,april2024
+Delhi,Sunder Nagar,5.0,1549195.0,"6,521 sq ft",Unfurnished,4.0,28.61843681,76.96178436,april2024
+Delhi,Prithviraj Road,5.0,1291192.0,"6,521 sq ft",Unfurnished,4.0,28.6001606,77.22097778,april2024
+Delhi,Amrita Shergill Marg,4.0,1549111.0,"5,896 sq ft",Unfurnished,4.0,28.5969677,77.22038269,april2024
+Delhi,Aurungzeb Road,5.0,1549195.0,"6,521 sq ft",Unfurnished,4.0,28.60279655,77.21968079,april2024
+Delhi,Babar Road,5.0,1548118.0,"6,521 sq ft",Unfurnished,4.0,28.63135529,77.2289505,april2024
+Delhi,Jor bagh,4.0,1548118.0,"5,896 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Jor bagh,4.0,1448184.0,"5,896 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Jor bagh,4.0,1418181.0,"5,896 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Jor bagh,4.0,1541818.0,"5,896 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Tuglak Road,5.0,1546195.0,"6,521 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Jor bagh,4.0,1410101.0,"5,896 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Prithviraj Road,5.0,1491191.0,"6,952 sq ft",Unfurnished,4.0,28.6001606,77.22097778,april2024
+Delhi,Aurungzeb Road,5.0,2491184.0,"6,521 sq ft",Unfurnished,4.0,28.60279655,77.21968079,april2024
+Delhi,Aurungzeb Road,5.0,1549191.0,"6,521 sq ft",Unfurnished,4.0,28.60279655,77.21968079,april2024
+Delhi,Amrita Shergill Marg,12.0,3010101.0,"14,521 sq ft",Unfurnished,4.0,28.5969677,77.22038269,april2024
+Delhi,Kasturba Gandhi Marg,5.0,2154919.0,"5,896 sq ft",Unfurnished,4.0,28.62281036,77.22541809,april2024
+Delhi,Kasturba Gandhi Marg,4.0,1449194.0,"5,896 sq ft",Unfurnished,4.0,28.62281036,77.22541809,april2024
+Delhi,Tuglak Road,5.0,1548182.0,"6,521 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Malcha Marg,4.0,1401101.0,"5,896 sq ft",Unfurnished,4.0,28.60173035,77.18534088,april2024
+Delhi,Malcha Marg,5.0,1418181.0,"5,896 sq ft",Unfurnished,4.0,28.60173035,77.18534088,april2024
+Delhi,Golf Links,5.0,1549191.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,5.0,1848415.0,"6,251 sq ft",Unfurnished,5.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,5.0,1548181.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,4.0,1282181.0,"5,562 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Tuglak Road,4.0,1401104.0,"5,896 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Tuglak Road,4.0,1548184.0,"5,896 sq ft",Unfurnished,4.0,28.59545326,77.21033478,april2024
+Delhi,Lodhi Road,4.0,1545181.0,"5,896 sq ft",Unfurnished,4.0,28.59095383,77.22794342,april2024
+Delhi,Lodhi Road,4.0,2011005.0,"5,896 sq ft",Unfurnished,4.0,28.59095383,77.22794342,april2024
+Delhi,Tilak Marg,4.0,2236212.0,"5,896 sq ft",Unfurnished,4.0,28.6206398,77.23696136,april2024
+Delhi,Golf Links,4.0,1548184.0,"6,251 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,5.0,2010101.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Golf Links,4.0,1546191.0,"6,521 sq ft",Unfurnished,4.0,28.59763908,77.23332977,april2024
+Delhi,Jor bagh,5.0,1749194.0,"6,952 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Jor bagh,5.0,1549191.0,"6,321 sq ft",Unfurnished,4.0,28.67728996,77.15930176,april2024
+Delhi,Sunder Nagar,4.0,1401100.0,"5,896 sq ft",Unfurnished,4.0,28.61843681,76.96178436,april2024
+Delhi,Sunder Nagar,5.0,1549181.0,"6,521 sq ft",Unfurnished,4.0,28.61843681,76.96178436,april2024
