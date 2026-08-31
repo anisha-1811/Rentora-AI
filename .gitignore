@@ -5,4 +5,7 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 backend/model.pkl
-.env
+node_modules/
+backend/firebase-service-account.json
+frontend/dist/
+frontend/build/

@@ -1,10 +1,25 @@
 import joblib
 import numpy as np
 import pandas as pd
+import psycopg2
+from dotenv import load_dotenv
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 app = FastAPI(title="Rentora AI - Rent Prediction API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # your Vite dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Load all saved artifacts once, at startup
 model = joblib.load("model.pkl")
@@ -25,6 +40,34 @@ class RentRequest(BaseModel):
     near_mall: int
     near_river: int
     near_mountain: int
+
+
+def log_prediction(request: RentRequest, predicted_rent: float):
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO predictions
+                (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, predicted_rent)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                request.city,
+                request.locality,
+                request.size_sqft,
+                bool(request.near_highway),
+                bool(request.near_mall),
+                bool(request.near_river),
+                bool(request.near_mountain),
+                predicted_rent
+            )
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print("Failed to log prediction:", e)
 
 
 @app.post("/predict")
@@ -68,6 +111,8 @@ def predict_rent(request: RentRequest):
     # Step 5: predict (model outputs log_rent), convert back to real rupees
     predicted_log_rent = model.predict(X_input)[0]
     predicted_rent = np.expm1(predicted_log_rent)
+
+    log_prediction(request, round(float(predicted_rent), 2))
 
     return {
         "city": request.city,
