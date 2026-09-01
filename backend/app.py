@@ -4,6 +4,8 @@ import pandas as pd
 import psycopg2
 from dotenv import load_dotenv
 import os
+import json
+import google.generativeai as genai
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +13,13 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# ============================================================
+# >>> YOUR ACTION: make sure backend/.env has this line added:
+#     GEMINI_API_KEY=your_actual_key_here
+# ============================================================
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=GEMINI_API_KEY)
+gemini_model = genai.GenerativeModel("gemini-3.6-flash")
 app = FastAPI(title="Rentora AI - Rent Prediction API")
 
 app.add_middleware(
@@ -28,6 +37,14 @@ locality_avg_rent = joblib.load("locality_avg_rent.pkl")
 overall_avg = joblib.load("overall_avg.pkl")
 model_columns = joblib.load("model_columns.pkl")
 
+# Load locality -> coordinates lookup for the map
+# Assumes uvicorn is run from inside backend/, so ../data reaches the repo-root data folder
+geo_df = pd.read_csv("../data/geocoded_localities.csv")
+geo_lookup = {
+    (row["city"], row["locality"]): (row["geo_lat"], row["geo_lon"])
+    for _, row in geo_df.iterrows()
+}
+
 
 class RentRequest(BaseModel):
     city: str
@@ -42,15 +59,19 @@ class RentRequest(BaseModel):
     near_mountain: int
 
 
-def log_prediction(request: RentRequest, predicted_rent: float):
+class ChatRequest(BaseModel):
+    message: str
+
+
+def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
     try:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             """
             INSERT INTO predictions
-                (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, predicted_rent)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, latitude, longitude, predicted_rent)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 request.city,
@@ -60,6 +81,8 @@ def log_prediction(request: RentRequest, predicted_rent: float):
                 bool(request.near_mall),
                 bool(request.near_river),
                 bool(request.near_mountain),
+                lat,
+                lon,
                 predicted_rent
             )
         )
@@ -112,10 +135,94 @@ def predict_rent(request: RentRequest):
     predicted_log_rent = model.predict(X_input)[0]
     predicted_rent = np.expm1(predicted_log_rent)
 
-    log_prediction(request, round(float(predicted_rent), 2))
+    # Step 6: look up coordinates for the map (falls back to None if locality isn't in the lookup)
+    coords = geo_lookup.get((request.city, request.locality))
+    lat, lon = coords if coords else (None, None)
+
+    log_prediction(request, round(float(predicted_rent), 2), lat, lon)
 
     return {
         "city": request.city,
         "locality": request.locality,
-        "predicted_rent": round(float(predicted_rent), 2)
+        "predicted_rent": round(float(predicted_rent), 2),
+        "latitude": lat,
+        "longitude": lon
     }
+
+
+EXTRACTION_PROMPT = """You are a real estate assistant. Extract rental search details from the user's message and return ONLY a JSON object, no other text, no markdown formatting.
+
+Required JSON shape:
+{
+  "city": string or null,
+  "locality": string or null,
+  "bhk": integer or null,
+  "size_sqft": number or null,
+  "furnishing": one of "Furnished", "Semi-Furnished", "Unfurnished", or null,
+  "bathrooms": integer or null,
+  "near_highway": true or false,
+  "near_mall": true or false,
+  "near_river": true or false,
+  "near_mountain": true or false,
+  "missing_fields": array of strings naming any of [city, locality, bhk, size_sqft, furnishing, bathrooms] that are null,
+  "reply": a short, natural conversational reply. If fields are missing, ask the user for them in one friendly sentence. If nothing is missing, briefly confirm what you understood.
+}
+
+Rules:
+- Only set near_highway/near_mall/near_river/near_mountain to true if the user explicitly mentions wanting/being near that feature. Default false.
+- bathrooms defaults to null if not mentioned - do not guess.
+- Be strict about JSON validity: no trailing commas, no comments, no markdown code fences.
+
+User message: """
+
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    try:
+        response = gemini_model.generate_content(EXTRACTION_PROMPT + request.message)
+        raw_text = response.text.strip()
+
+        # Gemini sometimes wraps JSON in ```json fences despite instructions — strip them defensively
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("```")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+        raw_text = raw_text.strip()
+
+        extracted = json.loads(raw_text)
+
+        # If any required field is still missing, don't call /predict yet — ask the user
+        if extracted.get("missing_fields"):
+            return {
+                "reply": extracted.get("reply", "Could you share a bit more detail?"),
+                "extracted": extracted,
+                "prediction": None
+            }
+
+        # All fields present — build a RentRequest and reuse the existing predict logic
+        rent_request = RentRequest(
+            city=extracted["city"],
+            locality=extracted["locality"],
+            bhk=extracted["bhk"],
+            size_sqft=extracted["size_sqft"],
+            furnishing=extracted["furnishing"],
+            bathrooms=extracted["bathrooms"],
+            near_highway=1 if extracted.get("near_highway") else 0,
+            near_mall=1 if extracted.get("near_mall") else 0,
+            near_river=1 if extracted.get("near_river") else 0,
+            near_mountain=1 if extracted.get("near_mountain") else 0,
+        )
+
+        prediction = predict_rent(rent_request)
+
+        return {
+            "reply": extracted.get("reply", "Here's what I found:"),
+            "extracted": extracted,
+            "prediction": prediction
+        }
+
+    except json.JSONDecodeError:
+        return {"reply": "Sorry, I had trouble understanding that. Could you rephrase?", "extracted": None, "prediction": None}
+    except Exception as e:
+        print("Chat error:", e)
+        return {"reply": "Something went wrong on my end. Please try again.", "extracted": None, "prediction": None}
