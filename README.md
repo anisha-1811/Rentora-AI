@@ -1,26 +1,58 @@
-# Rentora AI
+<div align="center">
 
-Rentora AI predicts rent for specific localities in Indian metro cities using real market data and surrounding-area context (proximity to highways, malls, rivers, and hills), and aims to help users find a home that fits their needs and budget through a conversational interface.
+# 🏠 Rentora AI
 
-## Problem
+**AI-powered rent prediction for Indian metro cities — through a conversation, not a form.**
 
-Finding a temporary home or rental in a new city is hard — rent varies wildly even between nearby localities, and that context (what's around a place, how it compares to its neighborhood) is rarely available in one spot. Rentora AI brings together real rental data and geographic context to give people a realistic, explainable rent estimate for a given area.
+![Status](https://img.shields.io/badge/status-active--development-C77D4F)
+![Python](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-3.6--flash-8E75B2?logo=googlegemini&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)
+![Budget](https://img.shields.io/badge/budget-%E2%82%B90-lightgrey)
+
+</div>
+
+---
+
+## What it does
+
+Finding a temporary home or rental in a new city is hard — rent varies wildly even between nearby localities, and the context that explains *why* (what's around a place, how it compares to its neighborhood) is rarely available in one spot.
+
+Rentora AI brings together real rental market data, geographic context, and a conversational AI layer so you can just **describe what you're looking for** — like you would to a friend — and get a realistic, explainable rent estimate on a map.
+
+> *"2BHK in Whitefield, Bangalore, around 1000 sqft, semi-furnished"* → a predicted rent, plotted on a live map, in one message.
+
+## Quick nav
+
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [How it works](#how-it-works)
+- [Model performance](#model-training)
+- [Project structure](#project-structure)
+- [Current status](#current-status)
+- [Getting started](#getting-started)
+- [Roadmap](#roadmap)
+
+---
 
 ## Features
 
-- **Rent prediction** for a given state/city/locality based on real rental market data
-- **Geo-aware features**: proximity to highways, malls, rivers, and mountains, derived from OpenStreetMap data
-- **User authentication** via Firebase (Email/Password + Google sign-in)
-- **Prediction history logging** — every prediction request is stored in Supabase for future analysis and feedback
-- **Conversational interface** (planned): a chatbot that asks about preferences and helps narrow down an ideal home/stay
-- **Feedback loop** (planned): collects user feedback to keep improving predictions
-- **Interactive map view** (planned): Leaflet.js visualization of predicted locations
+- 💬 **Conversational rent prediction** — describe what you want in plain English; Gemini extracts the structured details and the model predicts your rent
+- 📊 **Rent prediction** for any locality across 8 major Indian metro cities, based on real market data
+- 🗺️ **Geo-aware features**: proximity to highways, malls, rivers, and mountains, derived from OpenStreetMap
+- 🔐 **User authentication** via Firebase (Email/Password + Google sign-in)
+- 🧭 **Interactive map** — Leaflet.js marker + popup showing exactly where your predicted rent applies
+- 🗃️ **Prediction history logging** — every prediction is stored in Supabase for future analysis and feedback
+- 🔄 **Feedback loop** *(planned)* — collects user feedback to keep improving predictions
 
 ## Tech Stack
 
 | Layer | Tools |
 |---|---|
 | Data / ML | Python, Pandas, NumPy, Scikit-learn, XGBoost |
+| Conversational AI | Google Gemini API (`gemini-3.6-flash`) |
 | Geospatial | OpenStreetMap Overpass API, Leaflet.js |
 | Backend | FastAPI, psycopg2 |
 | Auth | Firebase Authentication |
@@ -28,16 +60,40 @@ Finding a temporary home or rental in a new city is hard — rent varies wildly 
 | Frontend | React (Vite), React Router |
 | Notebooks | Jupyter (VS Code, venv) |
 
-No paid APIs or services are used — Leaflet.js + OpenStreetMap were chosen over Google Maps specifically to keep this a zero-budget project.
+No paid APIs or services are used — Leaflet.js + OpenStreetMap over Google Maps, Gemini's free tier over paid LLM APIs — this stays a zero-budget project end to end.
 
-## Data
+## How it works
 
-- Real rental data scraped from Makaan.com and other public rental listings, covering 8 major Indian metro cities
-- ~117,000+ cleaned, deduplicated, and geocoded listings
-- Geo-features (highway/mall/river/mountain proximity) computed per locality via the Overpass API, then recalibrated from raw distance to threshold-based booleans for use in both the model and the planned chatbot
-- Target variable modeled as `log_rent` for training, converted back to raw rent for predictions
+```
+  You type naturally
+        │
+        ▼
+ ┌─────────────────┐      extracts city, locality, bhk,
+ │   Gemini API     │ ───► size, furnishing, bathrooms,
+ │  (/chat)         │      proximity flags — as JSON
+ └────────┬─────────┘
+          │ missing a field?
+          ▼                       all fields present
+ asks a follow-up question  ───────────────┐
+                                            ▼
+                                  ┌──────────────────┐
+                                  │  Random Forest    │
+                                  │  model (/predict)  │
+                                  └────────┬───────────┘
+                                           │
+                     ┌─────────────────────┼─────────────────────┐
+                     ▼                     ▼                     ▼
+              predicted rent      lat/lon lookup         logged to Supabase
+                     │                     │
+                     └──────────┬──────────┘
+                                ▼
+                   shown to you on a Leaflet map
+```
 
-## Model Training
+<details>
+<summary><strong>See the model comparison behind the prediction</strong></summary>
+
+<a id="model-training"></a>
 
 Three models were compared on the cleaned, geo-tagged dataset:
 
@@ -49,14 +105,24 @@ Three models were compared on the cleaned, geo-tagged dataset:
 
 **Random Forest was selected as the final model.** Linear Regression underperformed due to multicollinearity between location features (latitude/longitude/city dummies) and a structural inability to capture multiplicative interactions (e.g. locality prestige × property size) — issues tree-based models handle natively. `locality_encoded` (target-encoded average rent per locality) and `size_sqft` together account for ~83% of the Random Forest's feature importance, closely matching real-world rent drivers.
 
+</details>
+
+<details>
+<summary><strong>See the data behind the model</strong></summary>
+
+- Real rental data scraped from Makaan.com and other public rental listings, covering 8 major Indian metro cities
+- ~117,000+ cleaned, deduplicated, and geocoded listings
+- Geo-features (highway/mall/river/mountain proximity) computed per locality via the Overpass API, then recalibrated from raw distance to threshold-based booleans
+- Target variable modeled as `log_rent` for training, converted back to raw rent for predictions
+
+</details>
+
 ## Backend
 
-FastAPI serves a `/predict` endpoint that:
-- Target-encodes the requested locality using a saved training-time lookup
-- Scales numeric inputs with a saved `StandardScaler`
-- One-hot encodes furnishing status
-- Runs the Random Forest model and converts the log-scale prediction back to raw rent
-- Logs every prediction (inputs + result) to a Supabase `predictions` table
+FastAPI serves two endpoints:
+
+- **`/predict`** — takes structured rental details, target-encodes the locality, scales numeric inputs, one-hot encodes furnishing, runs the Random Forest model, converts the log-scale prediction back to raw rent, looks up map coordinates, and logs everything to Supabase
+- **`/chat`** — takes a free-text message, sends it to Gemini for structured field extraction, asks a follow-up question if anything's missing, and otherwise calls `/predict` internally and returns a conversational reply alongside the prediction
 
 CORS is enabled for the local Vite dev server during development.
 
@@ -64,13 +130,14 @@ CORS is enabled for the local Vite dev server during development.
 
 A React (Vite) single-page app with:
 - Firebase Authentication (Email/Password + Google sign-in) via a shared `AuthContext`
-- Protected routes — the prediction form is only accessible when logged in
-- A rent prediction form that calls the FastAPI `/predict` endpoint and displays the result
+- Protected routes — the app is only accessible when logged in
+- A conversational chat interface *(in progress)* that replaces the plain form, backed by `/chat`
+- A Leaflet map showing the predicted location on every result
 
 ## Database
 
 Supabase (PostgreSQL) with Row Level Security enabled on all tables:
-- `predictions` — every prediction request and result, for history and future analysis
+- `predictions` — every prediction request and result (including lat/lon), for history and future analysis
 - `feedback` — structure in place for the planned user feedback loop
 
 ## Project Structure
@@ -83,8 +150,9 @@ Rentora-AI/
 │   └── 05_model_training.ipynb      # Linear Regression → Random Forest → XGBoost
 ├── data/
 │   ├── rentora_final_week1.csv
-│   └── rentora_eda_final.csv
-├── backend/                         # FastAPI app + Supabase integration
+│   ├── rentora_eda_final.csv
+│   └── geocoded_localities.csv      # locality → lat/lon lookup for the map
+├── backend/                         # FastAPI app + Supabase + Gemini integration
 │   ├── app.py
 │   ├── locality_avg_rent.pkl
 │   ├── model_columns.pkl
@@ -111,9 +179,11 @@ Rentora-AI/
 - [x] FastAPI `/predict` endpoint
 - [x] Supabase (Postgres) integration — schema + prediction logging
 - [x] Firebase Authentication (Email/Password + Google)
-- [x] React frontend with protected routes and prediction form
-- [ ] Leaflet.js map view for predicted locations
-- [ ] Chatbot interface
+- [x] React frontend with protected routes
+- [x] Leaflet.js map view for predicted locations
+- [x] Gemini-powered `/chat` endpoint — structured extraction from natural language
+- [ ] Chat interface in the frontend (in progress)
+- [ ] Feedback loop UI
 - [ ] Deployment (backend + frontend)
 
 This is an active work-in-progress, built as a solo major project.
@@ -130,6 +200,17 @@ pip install -r requirements.txt
 
 Notebooks can be run in order from the `notebooks/` folder to reproduce the data pipeline. Run `notebooks/05_model_training.ipynb` fully to generate `backend/model.pkl` before running the FastAPI app.
 
+<details>
+<summary><strong>Backend environment variables</strong></summary>
+
+Create `backend/.env` with:
+```
+DATABASE_URL=your_supabase_connection_string
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+</details>
+
 For the frontend:
 ```bash
 cd frontend
@@ -139,12 +220,19 @@ npm run dev
 
 ## Roadmap
 
-- Add Leaflet.js map visualization for predicted locations
-- Build the chatbot front-end for interactive home search
+- Build the conversational chat UI in React, replacing the plain prediction form
+- Add multimodal image Q&A (Gemini) for property photos
+- Build out the feedback loop UI
 - Deploy backend (Render/Railway) and frontend (Vercel)
 - Expand beyond the initial 8 metro cities
+
+---
+
+<div align="center">
 
 ## Author
 
 **Anisha** — B.Tech CSE (AIML), C.V. Raman Global University
 [GitHub](https://github.com/anisha-1811)
+
+</div>
