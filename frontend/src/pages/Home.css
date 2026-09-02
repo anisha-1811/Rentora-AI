@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --rentora-bg: #151B2E;
+  --rentora-cream: #F4F0E8;
+  --rentora-terracotta: #C77D4F;
+  --rentora-slate: #7A8B99;
+  --rentora-teal: #3D5A5B;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.rentora-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--rentora-bg);
+  color: var(--rentora-cream);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---------- Header ---------- */
+
+.rentora-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(244, 240, 232, 0.08);
+  flex-shrink: 0;
+}
+
+.rentora-wordmark {
+  font-family: 'Fraunces', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.rentora-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rentora-user-email {
+  font-size: 0.85rem;
+  color: var(--rentora-slate);
+}
+
+.rentora-logout-btn {
+  background: transparent;
+  border: 1px solid rgba(244, 240, 232, 0.2);
+  color: var(--rentora-cream);
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.rentora-logout-btn:hover {
+  border-color: rgba(244, 240, 232, 0.5);
+}
+
+/* ---------- Chat area ---------- */
+
+.rentora-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.rentora-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 78%;
+}
+
+.rentora-row-user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.rentora-row-bot {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.rentora-bubble {
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.rentora-bubble-user {
+  background: var(--rentora-cream);
+  color: #22201B;
+  border-bottom-right-radius: 4px;
+}
+
+.rentora-bubble-bot {
+  background: var(--rentora-teal);
+  color: var(--rentora-cream);
+  border-bottom-left-radius: 4px;
+}
+
+/* ---------- Typing indicator ---------- */
+
+.rentora-typing {
+  display: flex;
+  gap: 4px;
+  padding: 0.85rem 1.1rem;
+}
+
+.rentora-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rentora-cream);
+  opacity: 0.6;
+  animation: rentora-bounce 1.2s infinite ease-in-out;
+}
+
+.rentora-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.rentora-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes rentora-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ---------- Prediction card ---------- */
+
+.rentora-card {
+  margin-top: 0.5rem;
+  width: 100%;
+  background: rgba(244, 240, 232, 0.04);
+  border: 1px solid rgba(199, 125, 79, 0.35);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.rentora-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+}
+
+.rentora-card-label {
+  font-size: 0.75rem;
+  color: var(--rentora-slate);
+}
+
+.rentora-card-rent {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--rentora-terracotta);
+}
+
+.rentora-card-permonth {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--rentora-slate);
+  margin-left: 0.2rem;
+}
+
+.rentora-card-location {
+  font-size: 0.85rem;
+  color: var(--rentora-cream);
+  opacity: 0.8;
+  margin-bottom: 0.75rem;
+}
+
+.rentora-card-map {
+  height: 220px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ---------- Feedback widget ---------- */
+
+.rentora-feedback {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(244, 240, 232, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rentora-feedback-label {
+  font-size: 0.78rem;
+  color: var(--rentora-slate);
+}
+
+.rentora-stars {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.rentora-star {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: rgba(244, 240, 232, 0.25);
+  cursor: pointer;
+  padding: 0.1rem 0.05rem;
+  transition: color 0.1s ease;
+}
+
+.rentora-star-filled {
+  color: var(--rentora-terracotta);
+}
+
+.rentora-star:disabled {
+  cursor: default;
+}
+
+.rentora-feedback-comment input {
+  width: 100%;
+  background: rgba(244, 240, 232, 0.06);
+  border: 1px solid rgba(244, 240, 232, 0.12);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  color: var(--rentora-cream);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  outline: none;
+  margin-top: 0.2rem;
+}
+
+.rentora-feedback-comment input:focus {
+  border-color: var(--rentora-terracotta);
+}
+
+.rentora-feedback-comment input::placeholder {
+  color: var(--rentora-slate);
+}
+
+.rentora-feedback-done {
+  font-size: 0.8rem;
+  color: var(--rentora-terracotta);
+}
+
+.rentora-feedback-error {
+  font-size: 0.75rem;
+  color: #C77D4F;
+  opacity: 0.85;
+}
+
+/* ---------- Input bar ---------- */
+
+.rentora-inputbar {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(244, 240, 232, 0.08);
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.rentora-inputbar input {
+  flex: 1;
+  background: rgba(244, 240, 232, 0.06);
+  border: 1px solid rgba(244, 240, 232, 0.12);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: var(--rentora-cream);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.rentora-inputbar input:focus {
+  border-color: var(--rentora-terracotta);
+}
+
+.rentora-inputbar input::placeholder {
+  color: var(--rentora-slate);
+}
+
+.rentora-inputbar button {
+  background: var(--rentora-terracotta);
+  color: #151B2E;
+  border: none;
+  border-radius: 10px;
+  padding: 0 1.4rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.rentora-inputbar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rentora-inputbar button:not(:disabled):hover {
+  opacity: 0.85;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 600px) {
+  .rentora-row {
+    max-width: 90%;
+  }
+  .rentora-chat,
+  .rentora-inputbar {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

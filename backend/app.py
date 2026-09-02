@@ -8,18 +8,16 @@ import json
 import google.generativeai as genai
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# ============================================================
-# >>> YOUR ACTION: make sure backend/.env has this line added:
-#     GEMINI_API_KEY=your_actual_key_here
-# ============================================================
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 gemini_model = genai.GenerativeModel("gemini-3.6-flash")
+
 app = FastAPI(title="Rentora AI - Rent Prediction API")
 
 app.add_middleware(
@@ -63,7 +61,14 @@ class ChatRequest(BaseModel):
     message: str
 
 
+class FeedbackRequest(BaseModel):
+    prediction_id: str
+    rating: int              # 1-5
+    comment: Optional[str] = None
+
+
 def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
+    """Inserts a prediction row and returns its id (or None if logging failed)."""
     try:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
@@ -72,6 +77,7 @@ def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
             INSERT INTO predictions
                 (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, latitude, longitude, predicted_rent)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
             """,
             (
                 request.city,
@@ -86,11 +92,34 @@ def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
                 predicted_rent
             )
         )
+        prediction_id = cursor.fetchone()[0]
         conn.commit()
         cursor.close()
         conn.close()
+        return str(prediction_id)
     except Exception as e:
         print("Failed to log prediction:", e)
+        return None
+
+
+def save_feedback(prediction_id: str, rating: int, comment: Optional[str]):
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO feedback (prediction_id, rating, comment)
+            VALUES (%s, %s, %s)
+            """,
+            (prediction_id, rating, comment)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        print("Failed to save feedback:", e)
+        return False
 
 
 @app.post("/predict")
@@ -139,15 +168,29 @@ def predict_rent(request: RentRequest):
     coords = geo_lookup.get((request.city, request.locality))
     lat, lon = coords if coords else (None, None)
 
-    log_prediction(request, round(float(predicted_rent), 2), lat, lon)
+    prediction_id = log_prediction(request, round(float(predicted_rent), 2), lat, lon)
 
     return {
+        "prediction_id": prediction_id,
         "city": request.city,
         "locality": request.locality,
         "predicted_rent": round(float(predicted_rent), 2),
         "latitude": lat,
         "longitude": lon
     }
+
+
+@app.post("/feedback")
+def submit_feedback(request: FeedbackRequest):
+    if not (1 <= request.rating <= 5):
+        return {"success": False, "message": "Rating must be between 1 and 5."}
+
+    saved = save_feedback(request.prediction_id, request.rating, request.comment)
+
+    if saved:
+        return {"success": True, "message": "Thanks for your feedback!"}
+    else:
+        return {"success": False, "message": "Could not save feedback right now."}
 
 
 EXTRACTION_PROMPT = """You are a real estate assistant. Extract rental search details from the user's message and return ONLY a JSON object, no other text, no markdown formatting.
