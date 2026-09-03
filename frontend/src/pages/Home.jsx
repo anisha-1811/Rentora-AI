@@ -42,8 +42,8 @@ function FeedbackWidget({ predictionId }) {
         }),
       });
       const data = await res.json();
-      // Backend returns { "status": "ok" } on success, { "status": "error", ... } on failure
-      setStatus(data.status === "ok" ? "sent" : "error");
+      // Backend returns { "success": true, "message": "..." } on success
+      setStatus(data.success ? "sent" : "error");
     } catch {
       setStatus("error");
     }
