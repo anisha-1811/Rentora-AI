@@ -23,7 +23,7 @@ app = FastAPI(title="Rentora AI - Rent Prediction API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # your Vite dev server
+    allow_origins=["http://localhost:5173","https://rentora-ai-seven.vercel.app"],  # your Vite dev server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
