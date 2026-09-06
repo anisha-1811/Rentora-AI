@@ -13,7 +13,7 @@ export default function FeedbackWidget({ predictionId }) {
     setSubmitting(true);
 
     try {
-      await fetch("http://localhost:8000/feedback", {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -32,7 +32,7 @@ function FeedbackWidget({ predictionId }) {
     setRating(selectedRating);
     setStatus("sending");
     try {
-      const res = await fetch("http://localhost:8000/feedback", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -119,7 +119,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/chat", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: trimmed }),
