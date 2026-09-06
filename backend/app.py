@@ -5,6 +5,7 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 import json
+import requests
 import google.generativeai as genai
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -27,6 +28,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================
+# Download model.pkl from Hugging Face if it isn't present locally.
+# This lets us deploy without committing a 1.2GB file to GitHub —
+# locally, model.pkl already exists in backend/, so this block
+# is skipped entirely and nothing changes about how you run it.
+# ============================================================
+MODEL_URL = "https://huggingface.co/anisha-1811/rentora-ai-model/resolve/main/model.pkl?download=true"
+MODEL_PATH = "model.pkl"
+
+if not os.path.exists(MODEL_PATH):
+    print("model.pkl not found locally — downloading from Hugging Face...")
+    response = requests.get(MODEL_URL, stream=True)
+    response.raise_for_status()
+    with open(MODEL_PATH, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+    print("Model downloaded successfully.")
 
 # Load all saved artifacts once, at startup
 model = joblib.load("model.pkl")
