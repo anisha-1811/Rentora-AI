@@ -102,6 +102,9 @@ export default function Home() {
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  // Running memory of fields gathered across turns (city, locality, bhk, etc.)
+  // Sent to /chat every turn so the backend can merge instead of starting over.
+  const [knownFields, setKnownFields] = useState({});
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -122,7 +125,7 @@ export default function Home() {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed }),
+        body: JSON.stringify({ message: trimmed, known_fields: knownFields }),
       });
 
       if (!res.ok) throw new Error("Request failed");
@@ -137,6 +140,14 @@ export default function Home() {
           prediction: data.prediction || null,
         },
       ]);
+
+      if (data.prediction) {
+        // Prediction succeeded — reset memory so the next search starts fresh
+        setKnownFields({});
+      } else {
+        // Still gathering info — keep the merged fields the backend sent back
+        setKnownFields(data.known_fields || {});
+      }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
