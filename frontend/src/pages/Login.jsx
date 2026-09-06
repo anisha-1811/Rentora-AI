@@ -6,11 +6,12 @@ import "./Login.css";
 // A handful of window positions along the skyline. Each lights up on a
 // staggered delay when the page mounts, like a city switching its lights on.
 const WINDOWS = [
-  { x: 18, y: 62, delay: 0.1 }, { x: 34, y: 48, delay: 0.5 }, { x: 34, y: 70, delay: 0.9 },
-  { x: 50, y: 40, delay: 0.3 }, { x: 50, y: 58, delay: 0.7 }, { x: 50, y: 76, delay: 1.2 },
-  { x: 66, y: 52, delay: 0.6 }, { x: 66, y: 68, delay: 0.2 }, { x: 82, y: 44, delay: 1.0 },
-  { x: 82, y: 62, delay: 0.4 }, { x: 82, y: 80, delay: 0.8 }, { x: 26, y: 84, delay: 1.1 },
-  { x: 58, y: 88, delay: 0.15 }, { x: 74, y: 86, delay: 0.65 }, { x: 42, y: 90, delay: 0.95 },
+  { x: 11, y: 18, delay: 0.1 }, { x: 11, y: 24, delay: 0.6 }, { x: 16, y: 21, delay: 1.0 },
+  { x: 27, y: 10, delay: 0.3 }, { x: 27, y: 17, delay: 0.75 }, { x: 32, y: 24, delay: 1.1 },
+  { x: 32, y: 12, delay: 0.45 }, { x: 45, y: 6, delay: 0.2 }, { x: 45, y: 14, delay: 0.85 },
+  { x: 45, y: 22, delay: 1.2 }, { x: 60, y: 13, delay: 0.5 }, { x: 60, y: 20, delay: 0.95 },
+  { x: 65, y: 16, delay: 0.35 }, { x: 78, y: 8, delay: 0.65 }, { x: 78, y: 16, delay: 1.05 },
+  { x: 83, y: 12, delay: 0.15 }, { x: 83, y: 22, delay: 0.55 },
 ];
 
 function MailIcon() {
@@ -82,27 +83,9 @@ export default function Login() {
   return (
     <div className="auth-screen">
       <div className="auth-brand">
-        <svg className="auth-skyline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <rect x="10" y="55" width="14" height="45" className="auth-building" />
-          <rect x="27" y="38" width="16" height="62" className="auth-building" />
-          <rect x="46" y="30" width="12" height="70" className="auth-building" />
-          <rect x="61" y="42" width="14" height="58" className="auth-building" />
-          <rect x="78" y="35" width="16" height="65" className="auth-building" />
-          {WINDOWS.map((w, i) => (
-            <rect
-              key={i}
-              x={w.x}
-              y={w.y}
-              width="3.2"
-              height="3.2"
-              className="auth-window"
-              style={{ animationDelay: `${w.delay}s` }}
-            />
-          ))}
-        </svg>
+        <span className="auth-wordmark">Rentora</span>
 
         <div className="auth-brand-copy">
-          <span className="auth-wordmark">Rentora</span>
           <h1 className="auth-headline">
             Find your place<br />in the city.
           </h1>
@@ -111,6 +94,25 @@ export default function Login() {
             what it should rent for, block by block.
           </p>
         </div>
+
+        <svg className="auth-skyline" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true">
+          <rect x="8" y="14" width="13" height="20" className="auth-building" />
+          <rect x="24" y="6" width="15" height="28" className="auth-building" />
+          <rect x="42" y="2" width="11" height="32" className="auth-building" />
+          <rect x="57" y="9" width="13" height="25" className="auth-building" />
+          <rect x="74" y="4" width="15" height="30" className="auth-building" />
+          {WINDOWS.map((w, i) => (
+            <rect
+              key={i}
+              x={w.x}
+              y={w.y}
+              width="2.6"
+              height="2.6"
+              className="auth-window"
+              style={{ animationDelay: `${w.delay}s` }}
+            />
+          ))}
+        </svg>
       </div>
 
       <div className="auth-panel">
