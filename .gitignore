@@ -8,4 +8,4 @@ backend/model.pkl
 node_modules/
 backend/firebase-service-account.json
 frontend/dist/
-frontend/build/
+frontend/build/notebooks/model_lite_test.pkl 
