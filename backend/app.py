@@ -23,7 +23,7 @@ app = FastAPI(title="Rentora AI - Rent Prediction API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","https://rentora-ai-seven.vercel.app"],  # your Vite dev server
+    allow_origins=["http://localhost:5173", "https://rentora-ai-seven.vercel.app"],  # your Vite dev server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,6 +78,7 @@ class RentRequest(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
+    known_fields: Optional[dict] = None   # running state of fields gathered across turns
 
 
 class FeedbackRequest(BaseModel):
@@ -212,7 +213,7 @@ def submit_feedback(request: FeedbackRequest):
         return {"success": False, "message": "Could not save feedback right now."}
 
 
-EXTRACTION_PROMPT = """You are a real estate assistant. Extract rental search details from the user's message and return ONLY a JSON object, no other text, no markdown formatting.
+EXTRACTION_PROMPT = """You are a real estate assistant continuing an ongoing conversation. Extract rental search details from the user's LATEST message only and return ONLY a JSON object, no other text, no markdown formatting.
 
 Required JSON shape:
 {
@@ -226,20 +227,29 @@ Required JSON shape:
   "near_mall": true or false,
   "near_river": true or false,
   "near_mountain": true or false,
-  "missing_fields": array of strings naming any of [city, locality, bhk, size_sqft, furnishing, bathrooms] that are null,
-  "reply": a short, natural conversational reply. If fields are missing, ask the user for them in one friendly sentence. If nothing is missing, briefly confirm what you understood.
+  "reply": a short, natural conversational reply.
 }
 
 Rules:
-- Only set near_highway/near_mall/near_river/near_mountain to true if the user explicitly mentions wanting/being near that feature. Default false.
+- Only extract fields mentioned in THIS message. Leave anything not mentioned as null (or false for the near_* flags) — do not guess or invent values.
+- Only set near_highway/near_mall/near_river/near_mountain to true if the user explicitly mentions wanting/being near that feature in this message. Default false.
 - bathrooms defaults to null if not mentioned - do not guess.
 - Be strict about JSON validity: no trailing commas, no comments, no markdown code fences.
 
 User message: """
 
+# Fields the frontend is expected to track across turns and send back as known_fields
+TRACKED_FIELDS = [
+    "city", "locality", "bhk", "size_sqft", "furnishing", "bathrooms",
+    "near_highway", "near_mall", "near_river", "near_mountain",
+]
+REQUIRED_FIELDS = ["city", "locality", "bhk", "size_sqft", "furnishing", "bathrooms"]
+
 
 @app.post("/chat")
 def chat(request: ChatRequest):
+    known_fields = request.known_fields or {}
+
     try:
         response = gemini_model.generate_content(EXTRACTION_PROMPT + request.message)
         raw_text = response.text.strip()
@@ -253,38 +263,57 @@ def chat(request: ChatRequest):
 
         extracted = json.loads(raw_text)
 
-        # If any required field is still missing, don't call /predict yet — ask the user
-        if extracted.get("missing_fields"):
+        # Merge this message's newly extracted values into what we already knew.
+        # A new non-null/non-false value overrides; otherwise we keep the prior known value.
+        merged = dict(known_fields)  # start from what we already had
+        for field in TRACKED_FIELDS:
+            new_value = extracted.get(field)
+            if new_value not in (None, False):
+                merged[field] = new_value
+            elif field not in merged:
+                merged[field] = new_value  # first time seeing it, keep None/False as-is
+
+        missing = [f for f in REQUIRED_FIELDS if merged.get(f) is None]
+
+        if missing:
             return {
                 "reply": extracted.get("reply", "Could you share a bit more detail?"),
-                "extracted": extracted,
+                "known_fields": merged,
                 "prediction": None
             }
 
-        # All fields present — build a RentRequest and reuse the existing predict logic
+        # All required fields present — build a RentRequest and reuse the existing predict logic
         rent_request = RentRequest(
-            city=extracted["city"],
-            locality=extracted["locality"],
-            bhk=extracted["bhk"],
-            size_sqft=extracted["size_sqft"],
-            furnishing=extracted["furnishing"],
-            bathrooms=extracted["bathrooms"],
-            near_highway=1 if extracted.get("near_highway") else 0,
-            near_mall=1 if extracted.get("near_mall") else 0,
-            near_river=1 if extracted.get("near_river") else 0,
-            near_mountain=1 if extracted.get("near_mountain") else 0,
+            city=merged["city"],
+            locality=merged["locality"],
+            bhk=merged["bhk"],
+            size_sqft=merged["size_sqft"],
+            furnishing=merged["furnishing"],
+            bathrooms=merged["bathrooms"],
+            near_highway=1 if merged.get("near_highway") else 0,
+            near_mall=1 if merged.get("near_mall") else 0,
+            near_river=1 if merged.get("near_river") else 0,
+            near_mountain=1 if merged.get("near_mountain") else 0,
         )
 
         prediction = predict_rent(rent_request)
 
         return {
             "reply": extracted.get("reply", "Here's what I found:"),
-            "extracted": extracted,
+            "known_fields": merged,
             "prediction": prediction
         }
 
     except json.JSONDecodeError:
-        return {"reply": "Sorry, I had trouble understanding that. Could you rephrase?", "extracted": None, "prediction": None}
+        return {
+            "reply": "Sorry, I had trouble understanding that. Could you rephrase?",
+            "known_fields": known_fields,
+            "prediction": None
+        }
     except Exception as e:
         print("Chat error:", e)
-        return {"reply": "Something went wrong on my end. Please try again.", "extracted": None, "prediction": None}
+        return {
+            "reply": "Something went wrong on my end. Please try again.",
+            "known_fields": known_fields,
+            "prediction": None
+        }
