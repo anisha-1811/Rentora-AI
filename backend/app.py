@@ -74,17 +74,20 @@ class RentRequest(BaseModel):
     near_mall: int
     near_river: int
     near_mountain: int
+    user_id: Optional[str] = None    # Firebase UID of the logged-in user, if any
 
 
 class ChatRequest(BaseModel):
     message: str
     known_fields: Optional[dict] = None   # running state of fields gathered across turns
+    user_id: Optional[str] = None         # Firebase UID of the logged-in user, if any
 
 
 class FeedbackRequest(BaseModel):
     prediction_id: str
     rating: int              # 1-5
     comment: Optional[str] = None
+    user_id: Optional[str] = None    # Firebase UID of the logged-in user, if any
 
 
 def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
@@ -95,8 +98,8 @@ def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
         cursor.execute(
             """
             INSERT INTO predictions
-                (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, latitude, longitude, predicted_rent)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (state, place, size_sqft, near_highway, near_mall, river_view, mountain_facing, latitude, longitude, predicted_rent, user_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -109,7 +112,8 @@ def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
                 bool(request.near_mountain),
                 lat,
                 lon,
-                predicted_rent
+                predicted_rent,
+                request.user_id
             )
         )
         prediction_id = cursor.fetchone()[0]
@@ -122,16 +126,16 @@ def log_prediction(request: RentRequest, predicted_rent: float, lat, lon):
         return None
 
 
-def save_feedback(prediction_id: str, rating: int, comment: Optional[str]):
+def save_feedback(prediction_id: str, rating: int, comment: Optional[str], user_id: Optional[str]):
     try:
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(
             """
-            INSERT INTO feedback (prediction_id, rating, comment)
-            VALUES (%s, %s, %s)
+            INSERT INTO feedback (prediction_id, rating, comment, user_id)
+            VALUES (%s, %s, %s, %s)
             """,
-            (prediction_id, rating, comment)
+            (prediction_id, rating, comment, user_id)
         )
         conn.commit()
         cursor.close()
@@ -205,7 +209,7 @@ def submit_feedback(request: FeedbackRequest):
     if not (1 <= request.rating <= 5):
         return {"success": False, "message": "Rating must be between 1 and 5."}
 
-    saved = save_feedback(request.prediction_id, request.rating, request.comment)
+    saved = save_feedback(request.prediction_id, request.rating, request.comment, request.user_id)
 
     if saved:
         return {"success": True, "message": "Thanks for your feedback!"}
@@ -294,6 +298,7 @@ def chat(request: ChatRequest):
             near_mall=1 if merged.get("near_mall") else 0,
             near_river=1 if merged.get("near_river") else 0,
             near_mountain=1 if merged.get("near_mountain") else 0,
+            user_id=request.user_id,
         )
 
         prediction = predict_rent(rent_request)

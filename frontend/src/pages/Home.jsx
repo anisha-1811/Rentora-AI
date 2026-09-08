@@ -21,7 +21,7 @@ const WELCOME_MESSAGE = {
   text: "Hi! Tell me what kind of place you're looking for — city, locality, size, furnishing — and I'll estimate the rent for you.",
 };
 
-function FeedbackWidget({ predictionId }) {
+function FeedbackWidget({ predictionId, userId }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -39,6 +39,7 @@ function FeedbackWidget({ predictionId }) {
           prediction_id: predictionId,
           rating: selectedRating,
           comment: comment.trim() || null,
+          user_id: userId || null,
         }),
       });
       const data = await res.json();
@@ -125,7 +126,7 @@ export default function Home() {
       const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, known_fields: knownFields }),
+        body: JSON.stringify({ message: trimmed, known_fields: knownFields, user_id: currentUser?.uid || null }),
       });
 
       if (!res.ok) throw new Error("Request failed");
@@ -218,7 +219,7 @@ export default function Home() {
                   </div>
                 )}
 
-                <FeedbackWidget predictionId={msg.prediction.prediction_id} />
+                <FeedbackWidget predictionId={msg.prediction.prediction_id} userId={currentUser?.uid} />
               </div>
             )}
           </div>
